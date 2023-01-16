@@ -4,78 +4,66 @@
     Deletion: Removing a node from the tree
     Searching: Finding a node with a specific value
     Traversal: Visiting all the nodes of the tree in a specific order (e.g. in-order, pre-order, post-order) */
-#include <stdio.h>
-#include <stdlib.h>
 
-struct Node {
+#include <iostream>
+
+class Node {
+public:
     int data;
-    struct Node* left;
-    struct Node* right;
+    Node* left;
+    Node* right;
+
+    Node(int data) {
+        this->data = data;
+        this->left = this->right = nullptr;
+    }
 };
 
-// create a new node
-struct Node* newNode(int data) {
-    struct Node* node = (struct Node*) malloc(sizeof(struct Node));
-    node->data = data;
-    node->left = NULL;
-    node->right = NULL;
-    return node;
-}
+class BST {
+public:
+    Node* root;
 
-// insert a new node in the tree
-struct Node* insert(struct Node* root, int data) {
-    if (root == NULL) {
-        return newNode(data);
+    BST() {
+        this->root = nullptr;
     }
-    if (data < root->data) {
-        root->left = insert(root->left, data);
-    } else if (data > root->data) {
-        root->right = insert(root->right, data);
-    }
-    return root;
-}
 
-// search for a node with a specific value
-bool search(struct Node* root, int data) {
-    if (root == NULL) {
-        return false;
+    Node* insert(Node* node, int data) {
+        if (!node) {
+            return new Node(data);
+        }
+        if (data < node->data) {
+            node->left = insert(node->left, data);
+        } else if (data > node->data) {
+            node->right = insert(node->right, data);
+        }
+        return node;
     }
-    if (root->data == data) {
-        return true;
-    }
-    if (root->data < data) {
-        return search(root->right, data);
-    } else {
-        return search(root->left, data);
-    }
-}
 
-// in-order traversal of the tree (left-root-right)
-void inOrder(struct Node* root) {
-    if (root != NULL) {
-        inOrder(root->left);
-        printf("%d ", root->data);
-        inOrder(root->right);
+    void inOrder(Node* root) {
+        if (root != nullptr) {
+            inOrder(root->left);
+            std::cout << root->data << " ";
+            inOrder(root->right);
+        }
     }
-}
+
+    void insert(int data) {
+        root = insert(root, data);
+    }
+};
 
 int main() {
-    struct Node* root = NULL;
-    root = insert(root, 50);
-    insert(root, 30);
-    insert(root, 20);
-    insert(root, 40);
-    insert(root, 70);
-    insert(root, 60);
-    insert(root, 80);
-    printf("In-order traversal of the tree: ");
-    inOrder(root);
-    printf("\n");
-    int search_for = 70;
-    if (search(root, search_for)) {
-        printf("Found %d in the tree\n", search_for);
-    } else {
-        printf("%d not found in the tree\n", search_for);
-    }
+    BST tree;
+    tree.insert(9);
+    tree.insert(5);
+    tree.insert(10);
+    tree.insert(0);
+    tree.insert(6);
+    tree.insert(11);
+    tree.insert(-1);
+    tree.insert(1);
+    tree.insert(2);
+    std::cout << "In-order traversal of the tree: ";
+    tree.inOrder(tree.root);
     return 0;
 }
