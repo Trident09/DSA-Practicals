@@ -1,8 +1,9 @@
-// C code to linearly search x in arr[]. If x
+// C++ code to linearly search x in arr[]. If x
 // is present then return its location, otherwise
 // return -1
 
-#include <stdio.h>
+#include <iostream>
+using namespace std;
 
 int search(int arr[], int N, int x)
 {
@@ -23,7 +24,7 @@ int main(void)
 	// Function call
 	int result = search(arr, N, x);
 	(result == -1)
-		? printf("Element is not present in array")
-		: printf("Element is present at index %d", result);
+		? cout << "Element is not present in array"
+		: cout << "Element is present at index " << result;
 	return 0;
 }
