@@ -1,10 +1,9 @@
-// C program for Dijkstra's single source shortest path
+// C++ program for Dijkstra's single source shortest path
 // algorithm. The program is for adjacency matrix
 // representation of the graph
-
+#include <iostream>
+using namespace std;
 #include <limits.h>
-#include <stdbool.h>
-#include <stdio.h>
 
 // Number of vertices in the graph
 #define V 9
@@ -14,6 +13,7 @@
 // in shortest path tree
 int minDistance(int dist[], bool sptSet[])
 {
+
 	// Initialize min value
 	int min = INT_MAX, min_index;
 
@@ -28,9 +28,9 @@ int minDistance(int dist[], bool sptSet[])
 // array
 void printSolution(int dist[])
 {
-	printf("Vertex \t\t Distance from Source\n");
+	cout << "Vertex \t Distance from Source" << endl;
 	for (int i = 0; i < V; i++)
-		printf("%d \t\t\t\t %d\n", i, dist[i]);
+		cout << i << " \t\t\t\t" << dist[i] << endl;
 }
 
 // Function that implements Dijkstra's single source
@@ -86,6 +86,7 @@ void dijkstra(int graph[V][V], int src)
 // driver's code
 int main()
 {
+
 	/* Let us create the example graph discussed above */
 	int graph[V][V] = { { 0, 4, 0, 0, 0, 0, 0, 8, 0 },
 						{ 4, 0, 8, 0, 0, 0, 0, 11, 0 },
