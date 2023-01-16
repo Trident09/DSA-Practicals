@@ -7,98 +7,112 @@
       c. Add the extracted vertex to the minimum spanning tree.
     Return the minimum spanning tree. */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <limits.h>
+// A C++ program for Prim's Minimum
+// Spanning Tree (MST) algorithm. The program is
+// for adjacency matrix representation of the graph
 
-#define MAX_VERTICES 100
-#define MAX_EDGES 10000
+#include <bits/stdc++.h>
+using namespace std;
 
-// structure for graph
-struct Graph {
-    int V;
-    int** adj;
-};
+// Number of vertices in the graph
+#define V 5
 
-// create a graph
-struct Graph* createGraph(int V) {
-    struct Graph* graph = (struct Graph*) malloc(sizeof(struct Graph));
-    graph->V = V;
-    graph->adj = (int**) malloc(V * sizeof(int*));
-    int i;
-    for (i = 0; i < V; i++) {
-        graph->adj[i] = (int*) malloc(V * sizeof(int));
-    }
-    return graph;
+// A utility function to find the vertex with
+// minimum key value, from the set of vertices
+// not yet included in MST
+int minKey(int key[], bool mstSet[])
+{
+	// Initialize min value
+	int min = INT_MAX, min_index;
+
+	for (int v = 0; v < V; v++)
+		if (mstSet[v] == false && key[v] < min)
+			min = key[v], min_index = v;
+
+	return min_index;
 }
 
-// add an edge to the graph
-void addEdge(struct Graph* graph, int src, int dest, int weight) {
-    graph->adj[src][dest] = weight;
-    graph->adj[dest][src] = weight;
+// A utility function to print the
+// constructed MST stored in parent[]
+void printMST(int parent[], int graph[V][V])
+{
+	cout << "Edge \tWeight\n";
+	for (int i = 1; i < V; i++)
+		cout << parent[i] << " - " << i << " \t"
+			<< graph[i][parent[i]] << " \n";
 }
 
-// find the vertex with the minimum key value
-int minKey(int key[], bool mstSet[], int V) {
-    int min = INT_MAX, min_index;
-    int v;
-    for (v = 0; v < V; v++) {
-        if (mstSet[v] == false && key[v] < min) {
-            min = key[v];
-            min_index = v;
-        }
-    }
-    return min_index;
+// Function to construct and print MST for
+// a graph represented using adjacency
+// matrix representation
+void primMST(int graph[V][V])
+{
+	// Array to store constructed MST
+	int parent[V];
+
+	// Key values used to pick minimum weight edge in cut
+	int key[V];
+
+	// To represent set of vertices included in MST
+	bool mstSet[V];
+
+	// Initialize all keys as INFINITE
+	for (int i = 0; i < V; i++)
+		key[i] = INT_MAX, mstSet[i] = false;
+
+	// Always include first 1st vertex in MST.
+	// Make key 0 so that this vertex is picked as first
+	// vertex.
+	key[0] = 0;
+	parent[0] = -1; // First node is always root of MST
+
+	// The MST will have V vertices
+	for (int count = 0; count < V - 1; count++) {
+		// Pick the minimum key vertex from the
+		// set of vertices not yet included in MST
+		int u = minKey(key, mstSet);
+
+		// Add the picked vertex to the MST Set
+		mstSet[u] = true;
+
+		// Update key value and parent index of
+		// the adjacent vertices of the picked vertex.
+		// Consider only those vertices which are not
+		// yet included in MST
+		for (int v = 0; v < V; v++)
+
+			// graph[u][v] is non zero only for adjacent
+			// vertices of m mstSet[v] is false for vertices
+			// not yet included in MST Update the key only
+			// if graph[u][v] is smaller than key[v]
+			if (graph[u][v] && mstSet[v] == false
+				&& graph[u][v] < key[v])
+				parent[v] = u, key[v] = graph[u][v];
+	}
+
+	// print the constructed MST
+	printMST(parent, graph);
 }
 
-// print the minimum spanning tree
-void printMST(int parent[], int V, int** graph) {
-    printf("Edge \tWeight\n");
-    int i;
-    for (i = 1; i < V; i++) {
-        printf("%d - %d \t%d \n", parent[i], i, graph[i][parent[i]]);
-    }
-}
+// Driver's code
+int main()
+{
+	/* Let us create the following graph
+		2 3
+	(0)--(1)--(2)
+	| / \ |
+	6| 8/ \5 |7
+	| / \ |
+	(3)-------(4)
+			9	 */
+	int graph[V][V] = { { 0, 2, 0, 6, 0 },
+						{ 2, 0, 3, 8, 5 },
+						{ 0, 3, 0, 0, 7 },
+						{ 6, 8, 0, 0, 9 },
+						{ 0, 5, 7, 9, 0 } };
 
-// implement Prim's algorithm
-void primMST(struct Graph* graph) {
-    int V = graph->V;
-    int key[V];
-    int parent[V];
-    bool mstSet[V];
-    int i;
-    for (i = 0; i < V; i++) {
-        key[i] = INT_MAX;
-        mstSet[i] = false;
-    }
-    key[0] = 0;
-    parent[0] = -1;
-    int v;
-    for (v = 0; v < V - 1; v++) {
-        int u = minKey(key, mstSet, V);
-        mstSet[u] = true;
-        int j;
-        for (j = 0; j < V; j++) {
-            if (graph->adj[u][j] && mstSet[j] == false && graph->adj[u][j] < key[j]) {
-                parent[j] = u;
-                key[j] = graph->adj[u][j];
-            }
-        }
-    }
-    printMST(parent, V, graph->adj);
-}
+	// Print the solution
+	primMST(graph);
 
-int main() {
-    int V = 5;
-    struct Graph* graph = createGraph(V);
-    addEdge(graph, 0, 1, 2);
-    addEdge(graph, 0, 3, 6);
-    addEdge(graph, 1, 2, 3);
-    addEdge(graph, 1, 3, 8);
-    addEdge(graph, 1, 4, 5);
-    addEdge(graph, 2, 4, 7);
-    addEdge(graph, 3, 4, 9);
-    primMST(graph);
-    return 0;
+	return 0;
 }
